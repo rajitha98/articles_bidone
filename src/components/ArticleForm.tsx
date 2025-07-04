@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Article } from "../data/articleSlice/interface";
 import { useDispatch } from "react-redux";
 import { ArticleAction } from "../data/articleSlice";
@@ -8,9 +8,19 @@ interface Props {
   initialData?: Article | null;
 }
 
-const ArticleForm = ({  onCancel, initialData }: Props) => {
+const ArticleForm = ({ onCancel, initialData }: Props) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<any>({});
+
+  useEffect(() => {
+    if (initialData) {
+      const temp: { [key: string]: any } = {};
+      temp["title"] = initialData?.title;
+      temp["status"] = initialData?.status;
+      temp["author"] = initialData?.author;
+      setFormData({ ...initialData });
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,17 +28,23 @@ const ArticleForm = ({  onCancel, initialData }: Props) => {
     const payload = {
       id: initialData?.id || Date.now().toString(),
       title: formData.title,
-      status: formData.status ?? "Draft",
+      status: formData.status || "Draft",
       author: formData.author,
-      createdAt: initialData?.createdAt || new Date().toISOString(),
+      createdAt:
+        initialData?.createdAt ||
+        initialData?.createdAt ||
+        new Date().toISOString(),
     };
-    dispatch(ArticleAction.createArticle(payload));
+    if (initialData) {
+      dispatch(ArticleAction.updateArticleStart(payload));
+    } else {
+      dispatch(ArticleAction.createArticle(payload));
+    }
     onCancel();
   };
 
   const onChangeValue = (name: string, value: any) => {
-    formData[name] = value;
-    setFormData(formData);
+    setFormData({ ...formData, [name]: value });
   };
 
   return (

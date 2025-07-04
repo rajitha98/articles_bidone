@@ -6,25 +6,49 @@ import { ArticleAction, ArticleState } from "../data/articleSlice";
 import { State } from "../store/store";
 import ModalAlert from "../components/Modal";
 import "./style.css";
+import { Article } from "../data/articleSlice/interface";
 
 const Home = () => {
   const dispatch = useDispatch();
   const [showForm, setShowForm] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<Article>();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
 
-  const { articles, isFetching, error } = useSelector<State, ArticleState>(
-    (s) => s.article
-  );
+  const { articles, isFetching, error, articleUpdated } = useSelector<
+    State,
+    ArticleState
+  >((s) => s.article);
+
+  useEffect(() => {
+    if (articleUpdated) {
+      setSelectedArticle(undefined);
+      dispatch(ArticleAction.resetArticles());
+    }
+  }, [articleUpdated]);
 
   const filtered = articles?.filter(
     (a) =>
-      a.title.toLowerCase().includes(search.toLowerCase()) &&
+      (a.title.toLowerCase().includes(search.toLowerCase()) ||
+        a.author.toLowerCase().includes(search.toLowerCase())) &&
       (filter === "All" || a.status === filter)
   );
 
-  const handleEdit = (article: any) => {
+  const sortArticlesByDate = (articles: Article[]): Article[] => {
+    return [...articles].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  };
+
+  const handleEdit = (id: string) => {
+    const selected = articles.find((item) => item.id === id);
+    setSelectedArticle(selected);
     setShowForm(true);
+  };
+
+  const handleDelete = (id: string) => {
+    dispatch(ArticleAction.deleteArticleStart({ id }));
   };
 
   useEffect(() => {
@@ -58,15 +82,20 @@ const Home = () => {
       </select>
       <section className="article-list">
         <ArticleList
-          articles={filtered}
+          articles={sortArticlesByDate(filtered)}
           onEdit={handleEdit}
-          onDelete={() => {}}
+          onDelete={handleDelete}
         />
       </section>
 
       <ModalAlert
         isVisible={showForm}
-        children={<ArticleForm onCancel={() => setShowForm(false)} />}
+        children={
+          <ArticleForm
+            initialData={selectedArticle}
+            onCancel={() => setShowForm(false)}
+          />
+        }
         onClose={() => setShowForm(false)}
       />
     </main>

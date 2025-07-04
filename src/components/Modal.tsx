@@ -27,6 +27,7 @@ const ModalAlert = ({ children, onClose, isVisible }: ModalProps) => {
 
   return (
     <Modal
+      ariaHideApp={false}
       isOpen={isVisible}
       onAfterOpen={afterOpenModal}
       onRequestClose={closeModal}

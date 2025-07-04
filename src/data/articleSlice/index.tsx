@@ -3,12 +3,14 @@ import { Article } from "./interface";
 
 export interface ArticleState {
   isFetching: boolean;
+  articleUpdated: boolean;
   error?: string;
   articles: Article[];
 }
 
 const initialState: ArticleState = {
   isFetching: false,
+  articleUpdated: false,
   articles: [],
   error: "",
 };
@@ -23,7 +25,7 @@ export const ArticleSlice = createSlice({
     fetchArticleStart: (state, actions) => {
       state.isFetching = true;
     },
-    fetchArticleSuccess: (state, actions) => {
+    fetchSuccess: (state, actions) => {
       state.isFetching = false;
       state.articles = actions.payload;
     },
@@ -31,14 +33,23 @@ export const ArticleSlice = createSlice({
       state.isFetching = false;
       state.articles = [...state.articles, actions.payload];
     },
-    fetchArticleFail: (state, actions) => {
+    updateSuccess: (state, actions) => {
       state.isFetching = false;
+      state.articleUpdated = true;
+      state.articles = actions.payload;
     },
-    deleteArticle: (state, actions) => {
+    deleteArticleStart: (state, actions) => {
       state.isFetching = true;
     },
-    updateArticle: (state, actions) => {
+    updateArticleStart: (state, actions) => {
       state.isFetching = true;
+    },
+    actionFailed: (state, actions) => {
+      state.isFetching = false;
+      state.error = "Something went wrong";
+    },
+    resetArticles: (state) => {
+      state = { ...initialState };
     },
   },
 });

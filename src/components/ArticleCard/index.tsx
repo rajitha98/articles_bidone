@@ -52,8 +52,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       </section>
 
       <footer>
-        <button onClick={()=>onClickEdit("")}>Edit</button>
-        <button onClick={()=>onClickDelete("")}>delete</button>
+        <button onClick={()=>onClickEdit(id)}>Edit</button>
+        <button onClick={()=>onClickDelete(id)}>delete</button>
       </footer>
     </article>
   );
