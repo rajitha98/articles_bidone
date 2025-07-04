@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const fetchArticleApi = () => {
+export const fetchArticleApi = (payload: any) => {
   return axios
-    .get("/api/articles", {
+    .get(`/api/articles?page=${payload.page ?? 1}`, {
       headers: {
         "content-type": "application/json; charset=UTF-8",
       },

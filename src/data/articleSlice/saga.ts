@@ -11,12 +11,14 @@ import { ArticleAction } from ".";
 import { State } from "../../store/store";
 import { Article } from "./interface";
 
-function* fetchArticle(): SagaIterator {
+function* fetchArticle(action: any): SagaIterator {
   try {
-    const { articles } = yield call(fetchArticleApi);
+    const { articles } = yield call(fetchArticleApi, action.payload);
     yield put(ArticleAction.fetchSuccess(articles));
   } catch (e: any) {
-    console.log("error message:", e.response?.data);
+    yield put(
+      ArticleAction.actionFailed("Something went wrong please try again later")
+    );
   }
 }
 
@@ -30,7 +32,9 @@ function* createArticle(action: any): SagaIterator {
 
     yield put(ArticleAction.createArticleSuccess(article));
   } catch (e: any) {
-    console.log("error message:", e.response?.data);
+    yield put(
+      ArticleAction.actionFailed("Something went wrong please try again later")
+    );
   }
 }
 
@@ -47,7 +51,9 @@ function* updateArticle(action: any): SagaIterator {
 
     yield put(ArticleAction.updateSuccess([...data, article]));
   } catch (e: any) {
-    console.log("error message:", e.response?.data);
+    yield put(
+      ArticleAction.actionFailed("Something went wrong please try again later")
+    );
   }
 }
 
@@ -57,10 +63,12 @@ function* updateArticleSaga() {
 
 function* deleteArticle(action: any): SagaIterator {
   try {
-    const data = yield call(deleteArticleApi, action.payload);
+    yield call(deleteArticleApi, action.payload);
     yield put(ArticleAction.fetchArticleStart({}));
   } catch (e: any) {
-    console.log("error message:", e.response?.data);
+    yield put(
+      ArticleAction.actionFailed("Something went wrong please try again later")
+    );
   }
 }
 

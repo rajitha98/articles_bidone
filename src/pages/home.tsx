@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import ArticleForm from "../components/ArticleForm";
-import ArticleList from "../components/ArticleList";
 import { useDispatch, useSelector } from "react-redux";
 import { ArticleAction, ArticleState } from "../data/articleSlice";
 import { State } from "../store/store";
 import ModalAlert from "../components/Modal";
-import "./style.css";
 import { Article } from "../data/articleSlice/interface";
+import CoverLoader from "../components/Clover";
+import Input from "../components/Input";
+import searchIcon from "../assets/icons/search.svg";
+import addIcon from "../assets/icons/plus-square.svg";
+import Dropdown from "../components/Dropdown";
+import { AddArticle, Container, ErrorAlert, SearchBox } from "./style";
+import { ThemeAction } from "../data/themeSlice";
+import Button from "../components/Button";
+
+const ArticleList = React.lazy(() => import("../containers/ArticleList"));
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -15,34 +23,22 @@ const Home = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
 
-  const { articles, isFetching, error, articleUpdated } = useSelector<
+  const { isFetching, error, articleUpdated } = useSelector<
     State,
     ArticleState
   >((s) => s.article);
 
   useEffect(() => {
+    dispatch(ArticleAction.fetchArticleStart({}));
+  }, []);
+
+  useEffect(() => {
     if (articleUpdated) {
       setSelectedArticle(undefined);
-      dispatch(ArticleAction.resetArticles());
     }
   }, [articleUpdated]);
 
-  const filtered = articles?.filter(
-    (a) =>
-      (a.title.toLowerCase().includes(search.toLowerCase()) ||
-        a.author.toLowerCase().includes(search.toLowerCase())) &&
-      (filter === "All" || a.status === filter)
-  );
-
-  const sortArticlesByDate = (articles: Article[]): Article[] => {
-    return [...articles].sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  };
-
-  const handleEdit = (id: string) => {
-    const selected = articles.find((item) => item.id === id);
+  const handleEdit = (selected: Article) => {
     setSelectedArticle(selected);
     setShowForm(true);
   };
@@ -51,54 +47,66 @@ const Home = () => {
     dispatch(ArticleAction.deleteArticleStart({ id }));
   };
 
-  useEffect(() => {
-    dispatch(ArticleAction.fetchArticleStart({}));
-  }, []);
+  const modalDismiss = () => {
+    setSelectedArticle(undefined);
+    setShowForm(false);
+  };
 
-  if (isFetching) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  const Options = [
+    { label: "All", value: "All" },
+    { label: "Published", value: "Published" },
+    { label: "Draft", value: "Draft" },
+    { label: "Archived", value: "Archived" },
+  ];
 
   return (
-    <main className="container">
+    <Container>
+      {isFetching && <CoverLoader />}
       <h1>Article List</h1>
-      <button
-        onClick={() => {
-          setShowForm(true);
-        }}
-      >
-        Add Article
-      </button>
-
-      <input
-        placeholder="Search by title"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
+      <Button
+        onClick={() => dispatch(ThemeAction.toggleTheme())}
+        label="Change Theme"
+        style={{ fontSize: 12 }}
       />
-      <select onChange={(e) => setFilter(e.target.value)} value={filter}>
-        <option value="All">All</option>
-        <option value="Published">Published</option>
-        <option value="Draft">Draft</option>
-        <option value="Archived">Archived</option>
-      </select>
-      <section className="article-list">
+      <SearchBox className="search-box">
+        <Input
+          icon={searchIcon}
+          placeholder="Search by title or author"
+          value={search}
+          onChange={(e: any) => setSearch(e.target.value)}
+        />
+
+        <Dropdown
+          options={Options}
+          value={filter}
+          onChange={(value) => setFilter(value)}
+        />
+      </SearchBox>
+
+      <AddArticle onClick={() => setShowForm(true)} className="add-article">
+        <img src={addIcon} alt="" />
+        <label>Add Article</label>
+      </AddArticle>
+
+      {error && <ErrorAlert className="error-alert">{error}</ErrorAlert>}
+
+      <Suspense fallback={<CoverLoader />}>
         <ArticleList
-          articles={sortArticlesByDate(filtered)}
+          search={search}
+          filter={filter}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
-      </section>
+      </Suspense>
 
       <ModalAlert
         isVisible={showForm}
         children={
-          <ArticleForm
-            initialData={selectedArticle}
-            onCancel={() => setShowForm(false)}
-          />
+          <ArticleForm initialData={selectedArticle} onCancel={modalDismiss} />
         }
-        onClose={() => setShowForm(false)}
+        onClose={modalDismiss}
       />
-    </main>
+    </Container>
   );
 };
 

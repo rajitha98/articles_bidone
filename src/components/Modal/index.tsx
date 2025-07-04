@@ -9,6 +9,8 @@ const customStyles = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
+    borderRadius: 10,
+    minHeight: 200
   },
 };
 
@@ -19,7 +21,6 @@ interface ModalProps {
 }
 
 const ModalAlert = ({ children, onClose, isVisible }: ModalProps) => {
-  const afterOpenModal = () => {};
 
   const closeModal = () => {
     onClose(false);
@@ -29,7 +30,6 @@ const ModalAlert = ({ children, onClose, isVisible }: ModalProps) => {
     <Modal
       ariaHideApp={false}
       isOpen={isVisible}
-      onAfterOpen={afterOpenModal}
       onRequestClose={closeModal}
       style={customStyles}
     >

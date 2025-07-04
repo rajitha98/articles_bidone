@@ -6,11 +6,13 @@ export interface ArticleState {
   articleUpdated: boolean;
   error?: string;
   articles: Article[];
+  newArticleCount: number;
 }
 
 const initialState: ArticleState = {
   isFetching: false,
   articleUpdated: false,
+  newArticleCount: 0,
   articles: [],
   error: "",
 };
@@ -27,7 +29,8 @@ export const ArticleSlice = createSlice({
     },
     fetchSuccess: (state, actions) => {
       state.isFetching = false;
-      state.articles = actions.payload;
+      state.articles = [...state.articles, ...actions.payload];
+      state.newArticleCount = actions.payload.length;
     },
     createArticleSuccess: (state, actions) => {
       state.isFetching = false;
@@ -46,10 +49,7 @@ export const ArticleSlice = createSlice({
     },
     actionFailed: (state, actions) => {
       state.isFetching = false;
-      state.error = "Something went wrong";
-    },
-    resetArticles: (state) => {
-      state = { ...initialState };
+      state.error = actions.payload;
     },
   },
 });

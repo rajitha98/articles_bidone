@@ -13,21 +13,30 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "axios": "^1.10.0",
+    "install": "^0.13.0",
+    "jest-watch-typeahead": "^3.0.1",
     "miragejs": "^0.1.48",
+    "npm": "^11.4.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-modal": "^3.16.3",
     "react-redux": "^9.2.0",
     "react-scripts": "5.0.1",
+    "react-spinners": "^0.17.0",
+    "react-test-renderer": "^19.1.0",
+    "redux-mock-store": "^1.5.5",
     "redux-saga": "^1.3.0",
+    "styled-components": "^6.1.19",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "npm run test:coverage",
+    "eject": "react-scripts eject",
+    "test:coverage": "react-scripts test --env=jsdom --watchAll=false --coverage"
   },
   "eslintConfig": {
     "extends": [
@@ -47,7 +56,30 @@
       "last 1 safari version"
     ]
   },
+  "jest": {
+    "moduleNameMapper": {
+      "axios": "axios/dist/node/axios.cjs"
+    },
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "<rootDir>/src/index.js"
+    ]
+  },
+  "collectCoverageFrom": [
+    "src/**/*.js"
+  ],
+  "coverageDirectory": "<rootDir>/coverage/",
+  "coverageThreshold": {
+    "global": {
+      "branches": 80,
+      "functions": 80,
+      "lines": 80,
+      "statements": 80
+    }
+  },
   "devDependencies": {
-    "@types/react-modal": "^3.16.3"
+    "@types/react-modal": "^3.16.3",
+    "@types/redux-mock-store": "^1.5.0",
+    "@types/styled-components": "^5.1.34"
   }
 }

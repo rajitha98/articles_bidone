@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Article } from "../data/articleSlice/interface";
+import { FormEvent, useEffect, useState } from "react";
+import { Article } from "../../data/articleSlice/interface";
 import { useDispatch } from "react-redux";
-import { ArticleAction } from "../data/articleSlice";
+import { ArticleAction } from "../../data/articleSlice";
+import "./style.css";
+import Button from "../Button";
+import Input from "../Input";
+import authorIcon from "../../assets/icons/person.svg";
+import titleIcon from "../../assets/icons/bookmark.svg";
 
 interface Props {
   onCancel: () => void;
@@ -11,6 +16,7 @@ interface Props {
 const ArticleForm = ({ onCancel, initialData }: Props) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<any>({});
+  const [showError, setShowError] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -22,9 +28,12 @@ const ArticleForm = ({ onCancel, initialData }: Props) => {
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.author) return alert("Required fields");
+    if (!formData.title || !formData.author) {
+      setShowError(true);
+      return;
+    }
     const payload = {
       id: initialData?.id || Date.now().toString(),
       title: formData.title,
@@ -48,32 +57,50 @@ const ArticleForm = ({ onCancel, initialData }: Props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="form-container" onSubmit={handleSubmit}>
       <h2>{initialData ? "Edit" : "Add"} Article</h2>
-      <input
+      <Input
+        icon={titleIcon}
         placeholder="Title"
         value={formData.title}
         onChange={(e) => onChangeValue("title", e.target.value)}
-        required
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSubmit(e);
+          }
+        }}
       />
-      <input
+      {showError && !formData.title && (
+        <p className="errorText">Please enter the article title</p>
+      )}
+
+      <Input
+        icon={authorIcon}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSubmit(e);
+          }
+        }}
         placeholder="Author"
         value={formData.author}
         onChange={(e) => onChangeValue("author", e.target.value)}
-        required
       />
+      {showError && !formData.author && (
+        <p className="errorText">Author name is required</p>
+      )}
+
       <select
         value={formData.status}
         onChange={(e) => onChangeValue("status", e.target.value)}
       >
-        <option value="Published">Published</option>
         <option value="Draft">Draft</option>
+        <option value="Published">Published</option>
         <option value="Archived">Archived</option>
       </select>
-      <button type="submit">Submit</button>
-      <button type="button" onClick={onCancel}>
-        Cancel
-      </button>
+      <section className="button-row">
+        <Button type="button" label="Cancel" onClick={onCancel} color="#000" />
+        <Button type="submit" label="Submit" color="red" />
+      </section>
     </form>
   );
 };

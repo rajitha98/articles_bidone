@@ -1,5 +1,7 @@
 import React from "react";
+import Button from "../Button";
 import "./style.css";
+import { ArticleAuthor, ArticleCardStyle, ArticleDate, StatusBadge } from "./styles";
 
 interface ArticleCardProps {
   id: string;
@@ -35,27 +37,24 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   };
 
   return (
-    <article className="article-card" aria-labelledby={`title-${id}`}>
+    <ArticleCardStyle>
       <header>
-        <span
-          className="status-badge"
-          style={{ backgroundColor: statusColor[status] }}
-        >
+        <StatusBadge style={{ backgroundColor: statusColor[status] }}>
           {status}
-        </span>
+        </StatusBadge>
         <h2 id={`title-${id}`}>{title}</h2>
       </header>
 
       <section>
-        <p className="article-author">{author}</p>
-        <p className="article-date">{formatDate(createdAt)}</p>
+        <ArticleAuthor>{author}</ArticleAuthor>
+        <ArticleDate className="article-date">{formatDate(createdAt)}</ArticleDate>
       </section>
 
       <footer>
-        <button onClick={()=>onClickEdit(id)}>Edit</button>
-        <button onClick={()=>onClickDelete(id)}>delete</button>
+        <Button label="Edit" color="#888" onClick={() => onClickEdit(id)} />
+        <Button label="Delete" color="red" onClick={() => onClickDelete(id)} />
       </footer>
-    </article>
+    </ArticleCardStyle>
   );
 };
 

@@ -16,8 +16,12 @@ export function makeServer() {
     routes() {
       this.namespace = "api";
 
-      this.get("/articles", (schema: any) => {
-        return schema.all("article");
+      this.get("/articles", (schema, request) => {
+        const page = Number(request.queryParams.page || 1);
+        const perPage = 10;
+        const all = schema.all("article").models;
+        const paginated = all.slice((page - 1) * perPage, page * perPage);
+        return { articles: paginated };
       });
 
       this.post("/articles", (schema: any, request) => {

@@ -1,17 +1,21 @@
-import { Provider } from "react-redux";
+import { useSelector } from "react-redux";
 import "./App.css";
 
-import { store } from "./store/store";
 import Home from "./pages/home";
 import { makeServer } from "./server/apiMockServer";
+import { ThemeProvider } from "styled-components";
+import { State } from "./store/store";
+import { ThemeState } from "./data/themeSlice";
+import { darkTheme, lightTheme } from "./theme/theme";
+makeServer();
 
 const App = () => {
-  makeServer();
-
+  const { mode } = useSelector<State, ThemeState>((s) => s.theme);
+  const theme = mode === "dark" ? darkTheme : lightTheme;
   return (
-    <Provider store={store}>
+    <ThemeProvider theme={theme}>
       <Home />
-    </Provider>
+    </ThemeProvider>
   );
 };
 
