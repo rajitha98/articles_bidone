@@ -7,6 +7,7 @@ export interface ArticleState {
   error?: string;
   articles: Article[];
   newArticleCount: number;
+  deleted: boolean;
 }
 
 const initialState: ArticleState = {
@@ -15,6 +16,7 @@ const initialState: ArticleState = {
   newArticleCount: 0,
   articles: [],
   error: "",
+  deleted: false,
 };
 
 export const ArticleSlice = createSlice({
@@ -44,12 +46,21 @@ export const ArticleSlice = createSlice({
     deleteArticleStart: (state, actions) => {
       state.isFetching = true;
     },
+    deleteSuccess: (state) => {
+      state.isFetching = false;
+      state.deleted = true;
+    },
     updateArticleStart: (state, actions) => {
       state.isFetching = true;
     },
     actionFailed: (state, actions) => {
       state.isFetching = false;
       state.error = actions.payload;
+    },
+    reset: (state) => {
+      state.isFetching = false;
+      state.articleUpdated = false;
+      state.deleted = false;
     },
   },
 });

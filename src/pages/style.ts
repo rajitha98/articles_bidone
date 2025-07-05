@@ -4,22 +4,18 @@ export const Container = styled.main`
   background-color: ${({ theme }) => theme.background};
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin: auto;
+  width: 60%;
   h1 {
     color: ${({ theme }) => theme.text};
   }
 `;
 
-export const ErrorAlert = styled.section`
-  background-color: rgba(255, 23, 23, 0.2);
-  padding: 10px;
-  width: 50%;
-  text-align: center;
-  color: red;
-  border: 1px solid red;
-  border-radius: 5px;
-  font-size: 18px;
+export const Wrapper = styled.section`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const AddArticle = styled.section`
@@ -29,7 +25,6 @@ export const AddArticle = styled.section`
   font-size: 18px;
   align-items: center;
   justify-content: start;
-  width: 60%;
   font-family: sans-serif;
 
   img {
@@ -48,4 +43,21 @@ export const SearchBox = styled.section`
   display: flex;
   gap: 10px;
   margin: 30px;
+`;
+
+export const Alert = styled.section<{ isError: boolean }>`
+  background-color: ${({ isError }) => (isError ? "#fadcd9" : "#d4edda")};
+  color: ${({ isError }) => (isError ? "#E14434" : "#155724")};
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-top: 20px;
+  width: 400px;
+  h5 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+  }
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
 `;

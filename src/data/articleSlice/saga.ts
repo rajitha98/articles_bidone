@@ -64,7 +64,16 @@ function* updateArticleSaga() {
 function* deleteArticle(action: any): SagaIterator {
   try {
     yield call(deleteArticleApi, action.payload);
-    yield put(ArticleAction.fetchArticleStart({}));
+
+    const { articles } = yield select((state: State) => state.article);
+
+    const data = articles.filter((item: Article) => item.id !== action.payload.id);
+
+    yield put(ArticleAction.updateSuccess(data));
+
+
+    yield put(ArticleAction.deleteSuccess());
+
   } catch (e: any) {
     yield put(
       ArticleAction.actionFailed("Something went wrong please try again later")

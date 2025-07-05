@@ -10,7 +10,7 @@ import Input from "../components/Input";
 import searchIcon from "../assets/icons/search.png";
 import addIcon from "../assets/icons/plus-square.png";
 import Dropdown from "../components/Dropdown";
-import { AddArticle, Container, ErrorAlert, SearchBox } from "./style";
+import { AddArticle, Alert, Container, SearchBox, Wrapper } from "./style";
 import { ThemeAction } from "../data/themeSlice";
 import Button from "../components/Button";
 import { RoleAction, RoleState } from "../data/roleSlice";
@@ -25,7 +25,7 @@ const Home = () => {
   const [filter, setFilter] = useState("All");
   const [userRole, setUserRole] = useState("reader");
 
-  const { isFetching, error, articleUpdated } = useSelector<
+  const { isFetching, error, articleUpdated, deleted } = useSelector<
     State,
     ArticleState
   >((s) => s.article);
@@ -36,10 +36,13 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (articleUpdated) {
-      setSelectedArticle(undefined);
+    if (deleted || articleUpdated) {
+      articleUpdated && setSelectedArticle(undefined);
+      setTimeout(() => {
+        dispatch(ArticleAction.reset());
+      }, 2000);
     }
-  }, [articleUpdated]);
+  }, [articleUpdated, deleted]);
 
   const handleEdit = (selected: Article) => {
     setSelectedArticle(selected);
@@ -70,42 +73,54 @@ const Home = () => {
   return (
     <Container>
       {isFetching && <CoverLoader />}
-      <h1>Article List</h1>
-      <Button
-        onClick={() => dispatch(ThemeAction.toggleTheme())}
-        label="Change Theme"
-        style={{ fontSize: 12 }}
-      />
-      <SearchBox className="search-box">
-        <Input
-          icon={searchIcon}
-          placeholder="Search by title or author"
-          value={search}
-          onChange={(e: any) => setSearch(e.target.value)}
+      <Wrapper>
+        <h1>Article List</h1>
+        <Button
+          onClick={() => dispatch(ThemeAction.toggleTheme())}
+          label="Change Theme"
+          style={{ fontSize: 12 }}
         />
+        <SearchBox>
+          <Input
+            icon={searchIcon}
+            placeholder="Search by title or author"
+            value={search}
+            onChange={(e: any) => setSearch(e.target.value)}
+          />
 
-        <Dropdown
-          options={Options}
-          value={filter}
-          onChange={(value) => setFilter(value)}
-        />
-        <Dropdown
-          options={roleOptions}
-          value={userRole}
-          onChange={(value) => {
-            setUserRole(value);
-            dispatch(RoleAction.changeRole(value));
-          }}
-        />
-      </SearchBox>
+          <Dropdown
+            options={Options}
+            value={filter}
+            onChange={(value) => setFilter(value)}
+          />
+          <Dropdown
+            options={roleOptions}
+            value={userRole}
+            onChange={(value) => {
+              setUserRole(value);
+              dispatch(RoleAction.changeRole(value));
+            }}
+          />
+        </SearchBox>
+      </Wrapper>
 
       {role === "editor" && (
-        <AddArticle onClick={() => setShowForm(true)} className="add-article">
+        <AddArticle onClick={() => setShowForm(true)}>
           <img src={addIcon} alt="" />
           <label>Add Article</label>
         </AddArticle>
       )}
-      {error && <ErrorAlert className="error-alert">{error}</ErrorAlert>}
+
+      {(error || deleted || articleUpdated) && (
+        <Alert isError={error !== ""}>
+          <h5>{error ? "Error" : deleted ? "Deleted" : "Updated"}</h5>
+          {error ? (
+            <p>{error}</p>
+          ) : (
+            <p>Article {deleted ? "Deleted" : "Updated"} successfully</p>
+          )}
+        </Alert>
+      )}
 
       <Suspense fallback={<CoverLoader />}>
         <ArticleList
