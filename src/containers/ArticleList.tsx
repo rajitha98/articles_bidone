@@ -6,6 +6,7 @@ import { ArticleAction, ArticleState } from "../data/articleSlice";
 import { State } from "../store/store";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "./style.css";
+import { RoleState } from "../data/roleSlice";
 
 interface Props {
   onEdit: (selected: Article) => void;
@@ -22,6 +23,8 @@ const ArticleList = ({ search, filter, onEdit, onDelete }: Props) => {
   const { articles, newArticleCount } = useSelector<State, ArticleState>(
     (state) => state.article
   );
+
+  const { role } = useSelector<State, RoleState>((state) => state.role);
 
   const filtered = articles?.filter(
     (a) =>
@@ -54,6 +57,7 @@ const ArticleList = ({ search, filter, onEdit, onDelete }: Props) => {
     >
       {sortArticlesByDate(filtered)?.map((item) => (
         <ArticleCard
+          userRole={role}
           id={item.id}
           title={item.title}
           status={item.status}

@@ -1,7 +1,13 @@
 import React from "react";
 import Button from "../Button";
-import "./style.css";
-import { ArticleAuthor, ArticleCardStyle, ArticleDate, StatusBadge } from "./styles";
+import {
+  ArticleAuthor,
+  ArticleCardStyle,
+  ArticleDate,
+  FooterRow,
+  StatusBadge,
+} from "./styles";
+import { RoleTypes } from "../../data/roleSlice";
 
 interface ArticleCardProps {
   id: string;
@@ -11,6 +17,7 @@ interface ArticleCardProps {
   createdAt: string;
   onClickEdit: (id: string) => void;
   onClickDelete: (id: string) => void;
+  userRole: RoleTypes;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
@@ -21,6 +28,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   createdAt,
   onClickEdit,
   onClickDelete,
+  userRole,
 }) => {
   const formatDate = (date: string) => {
     const d = new Date(date);
@@ -38,22 +46,30 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
   return (
     <ArticleCardStyle>
-      <header>
-        <StatusBadge style={{ backgroundColor: statusColor[status] }}>
-          {status}
-        </StatusBadge>
-        <h2 id={`title-${id}`}>{title}</h2>
-      </header>
-
       <section>
-        <ArticleAuthor>{author}</ArticleAuthor>
-        <ArticleDate className="article-date">{formatDate(createdAt)}</ArticleDate>
+        <header>
+          <StatusBadge style={{ backgroundColor: statusColor[status] }}>
+            {status}
+          </StatusBadge>
+          <h2>{title}</h2>
+        </header>
+
+        <section>
+          <ArticleAuthor>{author}</ArticleAuthor>
+          <ArticleDate>{formatDate(createdAt)}</ArticleDate>
+        </section>
       </section>
 
-      <footer>
-        <Button label="Edit" color="#888" onClick={() => onClickEdit(id)} />
-        <Button label="Delete" color="red" onClick={() => onClickDelete(id)} />
-      </footer>
+      {userRole === "editor" && (
+        <FooterRow>
+          <Button label="Edit" color="#888" onClick={() => onClickEdit(id)} />
+          <Button
+            label="Delete"
+            color="red"
+            onClick={() => onClickDelete(id)}
+          />
+        </FooterRow>
+      )}
     </ArticleCardStyle>
   );
 };

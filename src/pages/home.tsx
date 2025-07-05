@@ -7,12 +7,13 @@ import ModalAlert from "../components/Modal";
 import { Article } from "../data/articleSlice/interface";
 import CoverLoader from "../components/Clover";
 import Input from "../components/Input";
-import searchIcon from "../assets/icons/search.svg";
-import addIcon from "../assets/icons/plus-square.svg";
+import searchIcon from "../assets/icons/search.png";
+import addIcon from "../assets/icons/plus-square.png";
 import Dropdown from "../components/Dropdown";
 import { AddArticle, Container, ErrorAlert, SearchBox } from "./style";
 import { ThemeAction } from "../data/themeSlice";
 import Button from "../components/Button";
+import { RoleAction, RoleState } from "../data/roleSlice";
 
 const ArticleList = React.lazy(() => import("../containers/ArticleList"));
 
@@ -22,11 +23,13 @@ const Home = () => {
   const [selectedArticle, setSelectedArticle] = useState<Article>();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
+  const [userRole, setUserRole] = useState("reader");
 
   const { isFetching, error, articleUpdated } = useSelector<
     State,
     ArticleState
   >((s) => s.article);
+  const { role } = useSelector<State, RoleState>((s) => s.role);
 
   useEffect(() => {
     dispatch(ArticleAction.fetchArticleStart({}));
@@ -59,6 +62,11 @@ const Home = () => {
     { label: "Archived", value: "Archived" },
   ];
 
+  const roleOptions = [
+    { label: "Reader", value: "reader" },
+    { label: "Editor", value: "editor" },
+  ];
+
   return (
     <Container>
       {isFetching && <CoverLoader />}
@@ -81,13 +89,22 @@ const Home = () => {
           value={filter}
           onChange={(value) => setFilter(value)}
         />
+        <Dropdown
+          options={roleOptions}
+          value={userRole}
+          onChange={(value) => {
+            setUserRole(value);
+            dispatch(RoleAction.changeRole(value));
+          }}
+        />
       </SearchBox>
 
-      <AddArticle onClick={() => setShowForm(true)} className="add-article">
-        <img src={addIcon} alt="" />
-        <label>Add Article</label>
-      </AddArticle>
-
+      {role === "editor" && (
+        <AddArticle onClick={() => setShowForm(true)} className="add-article">
+          <img src={addIcon} alt="" />
+          <label>Add Article</label>
+        </AddArticle>
+      )}
       {error && <ErrorAlert className="error-alert">{error}</ErrorAlert>}
 
       <Suspense fallback={<CoverLoader />}>

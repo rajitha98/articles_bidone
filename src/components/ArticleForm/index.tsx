@@ -2,11 +2,11 @@ import { FormEvent, useEffect, useState } from "react";
 import { Article } from "../../data/articleSlice/interface";
 import { useDispatch } from "react-redux";
 import { ArticleAction } from "../../data/articleSlice";
-import "./style.css";
 import Button from "../Button";
 import Input from "../Input";
-import authorIcon from "../../assets/icons/person.svg";
-import titleIcon from "../../assets/icons/bookmark.svg";
+import authorIcon from "../../assets/icons/person.png";
+import titleIcon from "../../assets/icons/bookmark.png";
+import { ButtonRow, ErrorText, FormContainer } from "./style";
 
 interface Props {
   onCancel: () => void;
@@ -57,7 +57,7 @@ const ArticleForm = ({ onCancel, initialData }: Props) => {
   };
 
   return (
-    <form className="form-container" onSubmit={handleSubmit}>
+    <FormContainer onSubmit={handleSubmit}>
       <h2>{initialData ? "Edit" : "Add"} Article</h2>
       <Input
         icon={titleIcon}
@@ -71,7 +71,7 @@ const ArticleForm = ({ onCancel, initialData }: Props) => {
         }}
       />
       {showError && !formData.title && (
-        <p className="errorText">Please enter the article title</p>
+        <ErrorText>Please enter the article title</ErrorText>
       )}
 
       <Input
@@ -86,7 +86,7 @@ const ArticleForm = ({ onCancel, initialData }: Props) => {
         onChange={(e) => onChangeValue("author", e.target.value)}
       />
       {showError && !formData.author && (
-        <p className="errorText">Author name is required</p>
+        <ErrorText>Author name is required</ErrorText>
       )}
 
       <select
@@ -97,11 +97,11 @@ const ArticleForm = ({ onCancel, initialData }: Props) => {
         <option value="Published">Published</option>
         <option value="Archived">Archived</option>
       </select>
-      <section className="button-row">
+      <ButtonRow>
         <Button type="button" label="Cancel" onClick={onCancel} color="#000" />
         <Button type="submit" label="Submit" color="red" />
-      </section>
-    </form>
+      </ButtonRow>
+    </FormContainer>
   );
 };
 

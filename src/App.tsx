@@ -7,6 +7,7 @@ import { ThemeProvider } from "styled-components";
 import { State } from "./store/store";
 import { ThemeState } from "./data/themeSlice";
 import { darkTheme, lightTheme } from "./theme/theme";
+import { GlobalStyles } from "./theme/globalSyles";
 makeServer();
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
   const theme = mode === "dark" ? darkTheme : lightTheme;
   return (
     <ThemeProvider theme={theme}>
+      <GlobalStyles/>
       <Home />
     </ThemeProvider>
   );

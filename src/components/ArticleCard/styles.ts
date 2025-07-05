@@ -7,6 +7,9 @@ export const ArticleCardStyle = styled.article`
   padding: 16px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   background-color: ${({ theme }) => theme.background};
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
 
   header h2 {
     font-size: 18px;
@@ -41,4 +44,10 @@ export const StatusBadge = styled.span`
   font-size: 12px;
   color: #fff;
   border-radius: 4px;
+`;
+
+export const FooterRow = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
