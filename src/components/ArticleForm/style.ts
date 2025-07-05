@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
-export const FormContainer = styled.div`
+export const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   width: 400px;
   gap: 10px;
-  
+
   h2 {
     color: ${({ theme }) => theme.text};
   }

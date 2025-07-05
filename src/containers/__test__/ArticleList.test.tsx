@@ -15,24 +15,25 @@ const sampleArticles: Article[] = [
     title: "First Article",
     status: "Published",
     author: "Alice",
-    createdAt: "2025-07-01T12:00:00Z"
+    createdAt: "2025-07-01T12:00:00Z",
   },
   {
     id: "2",
     title: "Second Article",
     status: "Draft",
     author: "Bob",
-    createdAt: "2025-06-30T10:00:00Z"
-  }
+    createdAt: "2025-06-30T10:00:00Z",
+  },
 ];
 
 const renderComponent = (customState = {}) => {
   const store = mockStore({
+   role: { role: "editor" },
     article: {
       articles: sampleArticles,
       newArticleCount: 1,
-      ...customState
-    }
+      ...customState,
+    },
   });
 
   const mockOnEdit = jest.fn();
@@ -60,7 +61,8 @@ describe("ArticleList Component", () => {
 
   test("WHEN filter is set to Published THEN only published articles should be shown", () => {
     const store = mockStore({
-      article: { articles: sampleArticles, newArticleCount: 1 }
+     role: { role: "editor" },
+      article: { articles: sampleArticles, newArticleCount: 1 },
     });
 
     const mockOnEdit = jest.fn();
@@ -83,7 +85,8 @@ describe("ArticleList Component", () => {
 
   test("WHEN search term is entered THEN articles are filtered", () => {
     const store = mockStore({
-      article: { articles: sampleArticles, newArticleCount: 1 }
+     role: { role: "editor" },
+      article: { articles: sampleArticles, newArticleCount: 1 },
     });
 
     const mockOnEdit = jest.fn();
@@ -106,7 +109,8 @@ describe("ArticleList Component", () => {
 
   test("WHEN Edit button is clicked THEN onEdit callback is triggered", async () => {
     const store = mockStore({
-      article: { articles: sampleArticles, newArticleCount: 1 }
+     role: { role: "editor" },
+      article: { articles: sampleArticles, newArticleCount: 1 },
     });
 
     const mockOnEdit = jest.fn();
@@ -133,7 +137,8 @@ describe("ArticleList Component", () => {
 
   test("WHEN Delete button is clicked THEN onDelete callback is triggered", async () => {
     const store = mockStore({
-      article: { articles: sampleArticles, newArticleCount: 1 }
+      role: { role: "editor" },
+      article: { articles: sampleArticles, newArticleCount: 1 },
     });
 
     const mockOnEdit = jest.fn();
@@ -158,4 +163,3 @@ describe("ArticleList Component", () => {
     });
   });
 });
-
