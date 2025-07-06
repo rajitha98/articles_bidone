@@ -31,8 +31,8 @@ export const ArticleSlice = createSlice({
     },
     fetchSuccess: (state, actions) => {
       state.isFetching = false;
-      state.articles = [...state.articles, ...actions.payload];
-      state.newArticleCount = actions.payload.length;
+      state.articles = actions.payload.articles;
+      state.newArticleCount = actions.payload.newArticleCount;
     },
     createArticleSuccess: (state, actions) => {
       state.isFetching = false;

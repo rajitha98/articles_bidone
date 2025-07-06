@@ -13,8 +13,27 @@ import { Article } from "./interface";
 
 function* fetchArticle(action: any): SagaIterator {
   try {
-    const { articles } = yield call(fetchArticleApi, action.payload);
-    yield put(ArticleAction.fetchSuccess(articles));
+    const { articles: existingArticles } = yield select(
+      (state: State) => state.article
+    );
+
+    const { articles: newArticles } = yield call(
+      fetchArticleApi,
+      action.payload
+    );
+
+    const allArticles = [...existingArticles, ...newArticles];
+
+    const filtered = Array.from(
+      new Map(allArticles.map((item: Article) => [item.id, item])).values()
+    );
+
+    yield put(
+      ArticleAction.fetchSuccess({
+        articles: filtered,
+        newArticleCount: newArticles.length,
+      })
+    );
   } catch (e: any) {
     yield put(
       ArticleAction.actionFailed("Something went wrong please try again later")
@@ -67,13 +86,13 @@ function* deleteArticle(action: any): SagaIterator {
 
     const { articles } = yield select((state: State) => state.article);
 
-    const data = articles.filter((item: Article) => item.id !== action.payload.id);
+    const data = articles.filter(
+      (item: Article) => item.id !== action.payload.id
+    );
 
     yield put(ArticleAction.updateSuccess(data));
 
-
     yield put(ArticleAction.deleteSuccess());
-
   } catch (e: any) {
     yield put(
       ArticleAction.actionFailed("Something went wrong please try again later")

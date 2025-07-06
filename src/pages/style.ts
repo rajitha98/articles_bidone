@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const Container = styled.main`
-  background-color: ${({ theme }) => theme.background};
   display: flex;
   flex-direction: column;
   margin: auto;
@@ -19,6 +18,7 @@ export const Wrapper = styled.section`
 `;
 
 export const AddArticle = styled.section`
+  width: 200px;
   display: flex;
   gap: 10px;
   margin-top: 20px;
